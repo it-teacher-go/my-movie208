@@ -266,13 +266,12 @@ with col3:
         "스크린수",
         f"{first_movie['scrnCnt']:,}개"
     )
-
 # ---------------------------------------------------------
 # 7. 관객수 상위 5편 막대그래프
 # ---------------------------------------------------------
 st.markdown("### 📊 관객수 상위 5편")
 
-# 관객수 기준으로 내림차순 정렬
+# 관객수 기준 내림차순 정렬
 top5 = (
     df.sort_values(
         "audiCnt",
@@ -282,15 +281,22 @@ top5 = (
     .copy()
 )
 
-st.bar_chart(
-    top5,
-    x="movieNm",
-    y="audiCnt",
-    x_label="영화",
-    y_label="관객수",
-    sort="-y"
+# 현재 정렬된 영화 순서를 그대로 유지
+movie_order = top5["movieNm"].tolist()
+
+top5["movieNm"] = pd.Categorical(
+    top5["movieNm"],
+    categories=movie_order,
+    ordered=True
 )
 
+chart_data = top5.set_index("movieNm")[["audiCnt"]]
+
+st.bar_chart(
+    chart_data,
+    x_label="영화",
+    y_label="관객수"
+)
 # ---------------------------------------------------------
 # 8. 전체 박스오피스 표
 # ---------------------------------------------------------
